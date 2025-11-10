@@ -12,32 +12,50 @@ A robust foundation for building modern, scalable web applications. This boilerp
 
 ## Getting Started
 
-### Database Setup
+### Prerequisites
+- Docker and Docker Compose installed on your machine
+- Node.js 18+ installed
 
-**Start PostgreSQL with Docker:**
-Using Docker Compose (recommended)
+### Installation
+
+**1. Clone the repository:**
 ```bash
-docker-compose up -d
-
-# Or using Docker directly
-
-docker run --name postgres-db
--e POSTGRES_USER=postgres
--e POSTGRES_PASSWORD=postgres
--e POSTGRES_DB=myapp
--p 5432:5432
--d postgres:latest
+git clone https://github.com/LoanDeveloper/boilerplate-nextjs.git
+cd boilerplate-nextjs
 ```
 
-**Run Prisma migrations:**
+**2. Install dependencies:**
 ```bash
-npx prisma db push
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+**3. Configure environment variables:**
+```bash
+cp .env.example .env
+```
+Edit the `.env` file with your configuration.
+
+**4. Start the database with Docker:**
+Build and start the containers (first time)
+```bash
+docker-compose up --build -d
+# Or if using just PostgreSQL without custom Dockerfile:
+docker-compose up -d
+```
+
+**5. Run Prisma migrations:**
+```bash
+npx prisma generate
+npx prisma migrate dev
 # or
 npx prisma db push
 ```
 
-### Development Server
-
+**6. Start the development server:**
 ```bash
 npm run dev
 # or
@@ -49,6 +67,28 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Docker Commands
+
+**Stop the containers:**
+```bash
+docker-compose down
+```
+
+**Restart the containers:**
+```bash
+docker-compose restart
+```
+
+**View logs:**
+```bash
+docker-compose logs -f
+```
+
+**Rebuild after changes:**
+```bash
+docker-compose up --build -d
+```
 
 ### Perfect for:
 Whether you’re building a startup, scaling an existing project, or experimenting with new ideas, this boilerplate gets you up and running quickly while adhering to industry standards.
