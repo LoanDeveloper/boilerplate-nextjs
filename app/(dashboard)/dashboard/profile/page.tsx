@@ -16,6 +16,11 @@ export default async function DashboardProfilePage() {
     redirect("/sign-in");
   }
 
+  // Add a check for session.user
+  if (!session.user) {
+    return <div>Error: User data not found in session.</div>;
+  }
+
   return (
     <Card>
       <CardHeader>
