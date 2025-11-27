@@ -1,5 +1,5 @@
 // lib/auth-utils.ts
-import { cookies } from "next/headers"; // Add this import back
+import { cookies, headers } from "next/headers"; // Add this import back
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server"; // Add this import back
@@ -31,6 +31,9 @@ export async function getSession() {
 }
 
 export async function signOut() {
-  await auth.api.signOut();
+  const headersList = await headers();
+  await auth.api.signOut({
+    headers: headersList,
+  });
   redirect("/sign-in"); // Redirect after sign out
 }

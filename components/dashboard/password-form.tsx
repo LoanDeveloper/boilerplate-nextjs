@@ -51,11 +51,18 @@ export function PasswordForm() {
         });
         form.reset();
       } else {
-        toast({
-          title: "Error",
-          description: result.error,
-          variant: "destructive",
-        });
+        if (result.error === "Incorrect current password.") {
+          form.setError("currentPassword", {
+            type: "manual",
+            message: result.error,
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: result.error,
+            variant: "destructive",
+          });
+        }
       }
     });
   }
