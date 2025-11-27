@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import * as bcrypt from "bcryptjs";
 import { getSession, signOut } from "@/lib/auth-utils";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
@@ -76,44 +78,30 @@ export async function updatePassword(values: z.infer<typeof passwordFormSchema>)
   const { currentPassword, newPassword } = validatedFields.data;
 
   try {
-    const account = await prisma.account.findFirst({
-      where: {
-        userId: session.user.id,
-        providerId: "email",
+    const headersList = await headers();
+    await auth.api.changePassword({
+      body: {
+        currentPassword,
+        newPassword,
+        revokeOtherSessions: true,
       },
-    });
-
-    if (!account || !account.password) {
-      return {
-        error: "User not found or password not set.",
-      };
-    }
-
-    const isPasswordCorrect = await bcrypt.compare(currentPassword, account.password);
-
-    if (!isPasswordCorrect) {
-      return {
-        error: "Incorrect current password.",
-      };
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    await prisma.account.update({
-      where: {
-        id: account.id,
-      },
-      data: {
-        password: hashedPassword,
-      },
+      headers: headersList,
     });
 
     return {
       success: "Password updated successfully.",
     };
-  } catch (error) {
+  } catch (error: any) {
+    // Handle Better Auth errors
+    if (error.body?.message) {
+       if (error.body.message === "Invalid password") { // Adjust based on actual error message from better-auth
+           return { error: "Incorrect current password." };
+       }
+       return { error: error.body.message };
+    }
+    // Fallback for other errors
     return {
-      error: "Something went wrong.",
+      error: "Incorrect current password.", // better-auth throws if password doesn't match
     };
   }
 }
