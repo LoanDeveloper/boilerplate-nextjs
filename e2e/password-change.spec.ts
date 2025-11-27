@@ -26,8 +26,8 @@ test('should allow user to change password', async ({ page }) => {
   await page.click('button:has-text("Update Password")');
 
   // Expect success toast or message
-  await expect(page.getByText('Success')).toBeVisible();
-  await expect(page.getByText('Password updated successfully.')).toBeVisible();
+  await expect(page.getByText('Success', { exact: true })).toBeVisible();
+  await expect(page.getByText('Password updated successfully.', { exact: true })).toBeVisible();
 
   // 4. Sign Out
   await page.click('button:has-text("Sign Out")');
