@@ -1,8 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { User } from "better-auth/core";
 import { Settings, LogOut } from "lucide-react";
+
+// User type matching better-auth's User schema
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
